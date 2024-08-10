@@ -2,9 +2,9 @@ import { RepairRequest } from "../models/RepairRequest.model.js";
 import { checkNullUndefined } from "../utils/tools.js";
 import {uploadOnCloudinary} from "../utils/cloudinary.js"
 const addRepairRequest = async (req, res) => {
-    const { categoryId, productId, userId, pickupAddress, description, image, status } = req.body;
+    const { categoryId, productId, userId, pickupAddress,deliveryAddress, description, image, status } = req.body;
 
-    if (checkNullUndefined(categoryId, productId, userId, pickupAddress, description)) {
+    if (checkNullUndefined(categoryId, productId, userId, pickupAddress,deliveryAddress ,description)) {
         return res.status(400).json({ error: "Required fields not present" });
     }
     // console.log(req)
@@ -23,6 +23,7 @@ const addRepairRequest = async (req, res) => {
             productId,
             userId,
             pickupAddress,
+            deliveryAddress,
             description,
             image : imageLink.url,
             status

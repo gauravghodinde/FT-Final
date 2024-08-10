@@ -25,6 +25,10 @@ const repairRequestSchema = new Schema(
         type: String,
         required: true,
     },
+    deliveryAddress: {
+      type: String,
+      required: true,
+    },
     image: {
         type: String,
     },
