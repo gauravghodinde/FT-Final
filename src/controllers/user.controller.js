@@ -78,6 +78,8 @@ const registerUser =  async (req, res) => {
 
  const loginUser =  async (req, res) => {
     const { phoneNumber, password } = req.body;
+    console.log("user")
+    console.log(req.body);
 
     if(checkNullUndefined(phoneNumber) || checkNullUndefined(password)){
         return res.status(400).json({ error: "invalid credentials" });

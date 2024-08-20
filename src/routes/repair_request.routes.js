@@ -3,6 +3,7 @@ import {
   addRepairRequest,
   getRepairRequest,
   getAllRepairRequests,
+  getUsersRepairRequest,
 } from "../controllers/repair_request.controller.js";
 
 
@@ -21,7 +22,8 @@ router.route("/add").post(
   addRepairRequest
 );
 
-router.route("/get").get(getRepairRequest);
+router.route("/get").post(getRepairRequest);
+router.route("/get/user").post(getUsersRepairRequest);
 router.route("/getAll").get(getAllRepairRequests);
 
 export default router;

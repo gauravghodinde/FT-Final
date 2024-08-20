@@ -45,6 +45,24 @@ const addRepairRequest = async (req, res) => {
     }
 };
 
+const getUsersRepairRequest = async (req, res) => {
+    const {userId} = req.body
+
+    if (checkNullUndefined(userId) ) {
+      return res.status(400).json({ error: "invalid credentials null" })
+    }
+
+    try {
+      const RepairRequests = await RepairRequest.find({userId:userId});
+  
+      res.status(201).json({ message: "ok", body: RepairRequests });
+    } catch (error) {
+      console.error("Error getting locations : ", error);
+      res.status(500).json({ error: `Internal server error ${error}` });
+    }
+  };
+  
+
 const getRepairRequest = async (req, res) => {
     const { id } = req.params;
 
@@ -86,5 +104,6 @@ const getAllRepairRequests = async (req, res) => {
 export {
     addRepairRequest,
     getRepairRequest,
-    getAllRepairRequests
+    getAllRepairRequests,
+    getUsersRepairRequest
 };
