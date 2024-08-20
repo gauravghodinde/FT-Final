@@ -1,28 +1,41 @@
 import express, { json, response } from 'express';
 import { MongoClient, ServerApiVersion } from 'mongodb';
-import { checkNullUndefined } from  '../src/utils/tools.js' //'../src/utils/tools.js';
+import { checkNullUndefined } from  './src/utils/tools.js' //'./src/utils/tools.js';
 import bcrypt from "bcrypt"
-import connectDB from '../src/database/index.js';
+import connectDB from './src/database/index.js';
 import dotenv from 'dotenv';
+import cors from 'cors';
 
 dotenv.config();
 const app = express();
-app.use(express.json({limit: "16kb"}))
+app.use(express.json({ limit: "10mb" }));
 const port = process.env.PORT || 3000;
 
+app.use(cors())
 
+// app.use((req, res, next) => {
+//   // console.log("Headers:", req.headers);
+//   console.log("Body:", req.body);
+//   next();
+// });
 
-import userRouter from '../src/routes/user.routes.js'
-import categoryRouter from '../src/routes/category.routes.js'
-import productRouter from '../src/routes/product.routes.js'
-import repair_requestRouter from '../src/routes/repair_request.routes.js'
-import tempRuter from '../src/routes/temp.route.js'
+import userRouter from './src/routes/user.routes.js'
+import locationRouter from './src/routes/location.routes.js'
+import categoryRouter from './src/routes/category.routes.js'
+import productRouter from './src/routes/product.routes.js'
+import repair_requestRouter from './src/routes/repair_request.routes.js'
+import tempRuter from './src/routes/temp.route.js'
+import pendingActionRouter from './src/routes/pendingAction.routes.js'
+
 
 app.use("/users", userRouter)
 app.use("/category", categoryRouter)
 app.use("/product", productRouter)
 app.use("/repair_request", repair_requestRouter)
 app.use("/temp",tempRuter )
+app.use("/location",locationRouter)
+app.use("/pending_action",pendingActionRouter)
+
 
 
 // MongoDB connection URI
