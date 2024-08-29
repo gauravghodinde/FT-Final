@@ -53,7 +53,7 @@ const getUsersRepairRequest = async (req, res) => {
     }
 
     try {
-      const RepairRequests = await RepairRequest.find({userId:userId});
+      const RepairRequests = await RepairRequest.find({userId:userId ,active: true});
   
       res.status(201).json({ message: "ok", body: RepairRequests });
     } catch (error) {
@@ -101,9 +101,50 @@ const getAllRepairRequests = async (req, res) => {
     }
 };
 
+
+const updateRepairRequest = async (req, res) => {
+    const { repairRequestId,active, pickupAddress,deliveryAddress, description, image, status } = req.body;
+    if(checkNullUndefined(repairRequestId) ){
+        return res.status(400).json({ error: "repairRequestId cannot be null" });
+    }
+
+    try {
+        const repairRequest = await RepairRequest.findOne({
+          $or: [{"_id":repairRequestId}]
+    
+          })
+        if (!repairRequest) {
+          return res.status(404).json({ error: 'Repair Request not found' });
+        }
+        const updateFields = {}; 
+        if (pickupAddress !== undefined) updateFields.pickupAddress = pickupAddress;
+        if (deliveryAddress !== undefined) updateFields.deliveryAddress = deliveryAddress;
+        if (description !== undefined) updateFields.description = description;
+        if (image !== undefined) updateFields.image = image;
+        if (status !== undefined) updateFields.status = status;
+        if (active !== undefined) updateFields.active = active;
+    
+        // Update the user document with the fields that are not null
+        await RepairRequest.updateOne({ "_id":repairRequestId }, { $set: updateFields });
+    
+        const updatedRepairRequest = await RepairRequest.findOne({
+          $or: [{_id:repairRequest}]
+          })
+        res.status(200).json({ message: 'RepairRequest updated successfully' , body: updateRepairRequest });
+      
+    
+    
+    
+      } catch (error) {
+        console.error('Error updating Repair request:', error);
+        res.status(500).json({ error: 'Internal server error' });
+      }
+}
+
 export {
     addRepairRequest,
     getRepairRequest,
     getAllRepairRequests,
-    getUsersRepairRequest
+    getUsersRepairRequest,
+    updateRepairRequest
 };

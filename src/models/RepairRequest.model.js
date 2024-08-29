@@ -41,6 +41,10 @@ const repairRequestSchema = new Schema(
         required: true,
         enum: ["request raised", "repair partner confirmation await", "Confirmed and reay to pick", "waiting for estimate", "Estimate and waiting confirmation", "cancelled by user", "cancelled by FixThis"],
     },
+    active:{
+      type:Boolean,
+      default: true
+    }
   },
   {
     timestamps: true,
