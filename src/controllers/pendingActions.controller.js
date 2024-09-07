@@ -2,6 +2,8 @@ import { RepairRequest } from "../models/RepairRequest.model.js";
 import { checkNullUndefined } from "../utils/tools.js";
 import {uploadOnCloudinary} from "../utils/cloudinary.js"
 import { PendingAction } from "../models/pendingActions.model.js";
+import { sendNotificationToFCM } from "./Notification.controller.js";
+import { User } from "../models/User.model.js";
 
 
 const addPendingAction = async (req, res) => {
@@ -18,6 +20,24 @@ const addPendingAction = async (req, res) => {
 
     
     try {
+      const repairRequest = await RepairRequest.findOne({
+        $or: [{"_id":repairRequestId}]
+        })
+        if(repairRequest == null){
+          return res.status(400).json({
+            status: "Failed",
+            message: "repair request doesnot exist",
+        })
+        }
+        const user = await User.findOne({
+          $or: [{"_id":repairRequest.userId}]
+          })
+          if(user == null){
+            return res.status(400).json({
+              status: "Failed",
+              message: " does not exist",
+          });
+        }
         const pendingAction = await PendingAction.create({
             repairRequestId, comment, response,action
         });
@@ -29,6 +49,13 @@ const addPendingAction = async (req, res) => {
                 status: "Failed",
                 message: "Something went wrong",
             });
+        }
+        const userfcm = user.fcmtoken;
+        if(userfcm != null && userfcm != ""){
+          req.body.registrationToken = userfcm;
+          req.body.notificationTitle = `Pending Action Generated`;
+          req.body.notificationBody = `message : ${action}`;
+          await sendNotificationToFCM(req,res);
         }
 
         res.status(201).json({ message: "Pending Action created successfully", body: PendingAction });
@@ -98,9 +125,6 @@ const getRepairRequestsPendingAction = async (req, res) => {
 const getAllPendingActions = async (req, res) => {
     try {
         const allPendingAction = await PendingAction.find({});
-
- 
-
         res.status(200).json({ message: "ok", body: allPendingAction });
     } catch (error) {
         console.error("Error getting all Pending Actions", error);
