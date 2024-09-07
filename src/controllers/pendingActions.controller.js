@@ -5,19 +5,21 @@ import { PendingAction } from "../models/pendingActions.model.js";
 
 
 const addPendingAction = async (req, res) => {
-    const { repairRequestId, comment, response} = req.body;
-
-    if (checkNullUndefined(repairRequestId, comment, response)) {
+    const { repairRequestId, comment, response , action} = req.body;
+    console.log("adding Pending Action")
+    console.log(req.body);
+    if (checkNullUndefined(repairRequestId) ||  checkNullUndefined(action)) {
         return res.status(400).json({ error: "Required fields not present" });
     }
     // console.log(req)
-    console.log("adding Pending Action")
+
+    
     
 
     
     try {
         const pendingAction = await PendingAction.create({
-            repairRequestId, comment, response
+            repairRequestId, comment, response,action
         });
 
         const createdPendingAction = await PendingAction.findById(pendingAction._id).populate('repairRequestId');
@@ -35,6 +37,45 @@ const addPendingAction = async (req, res) => {
         res.status(500).json({ error: `Internal server error ${error} error ` });
     }
 };
+const updatePendingAction = async (req, res) => {
+    const {  comment, response , action , PendingActionId } = req.body;
+    if( checkNullUndefined(PendingActionId) ){
+        return res.status(400).json({ error: " PendingActionId cannot be null" });
+    }
+
+    try {
+       
+        const pendingAction = await PendingAction.findOne({
+            $or: [{"_id":PendingActionId}]
+      
+            })
+          if (!pendingAction) {
+            return res.status(404).json({ error: 'Pending Action not found' });
+          }
+        const updateFields = {}; 
+        if (comment !== undefined) updateFields.comment = comment;
+        if (response !== undefined) updateFields.response = response;
+        if (action !== undefined) updateFields.action = action;
+        
+    
+        // Update the user document with the fields that are not null
+        const pendingActions = await PendingAction.updateOne({ "_id":PendingActionId }, { $set: updateFields });
+    
+        // const updatedPendingAction = await PendingAction.findOne({
+        //   $or: [{_id:pendingAction._id}]
+        //   })
+        const updatedPendingAction = await PendingAction.find({repairRequestId:pendingAction.repairRequestId});
+        
+        res.status(200).json({ message: 'RepairRequest updated successfully' , body: updatedPendingAction });
+      
+    
+    
+    
+      } catch (error) {
+        console.error('Error updating Repair request:', error);
+        res.status(500).json({ error: 'Internal server error' });
+      }
+}
 
 const getRepairRequestsPendingAction = async (req, res) => {
     const {repairRequestId} = req.body
@@ -58,12 +99,7 @@ const getAllPendingActions = async (req, res) => {
     try {
         const allPendingAction = await PendingAction.find({});
 
-        // if (!allPendingAction.length) {
-        //     return res.status(400).json({
-        //         status: "Failed",
-        //         message: "No PendingAction found",
-        //     });
-        // }
+ 
 
         res.status(200).json({ message: "ok", body: allPendingAction });
     } catch (error) {
@@ -75,5 +111,6 @@ const getAllPendingActions = async (req, res) => {
 export {
     addPendingAction,
     getRepairRequestsPendingAction,
-    getAllPendingActions
+    getAllPendingActions,
+    updatePendingAction
 };

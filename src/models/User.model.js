@@ -6,6 +6,10 @@ const userSchema = new Schema({
     type: String,
     required: true
   },
+  fcmtoken: {
+    type: String,
+    default: ""
+  },
   phoneNumber: {
     type: String,
     required: true,

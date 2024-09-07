@@ -12,12 +12,16 @@ const pendingActionSchema = new Schema(
         type: Date,
         default: Date.now,
     },
+    action: {
+      type: String,
+    },
     comment: {
         type: String,
+        default: "enter a comment"
     },
     response: {
-      type: Boolean,
-      required: true,
+      type: String,
+      default: "Waiting"
     },
   },
   {

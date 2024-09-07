@@ -128,7 +128,7 @@ const updateRepairRequest = async (req, res) => {
         await RepairRequest.updateOne({ "_id":repairRequestId }, { $set: updateFields });
     
         const updatedRepairRequest = await RepairRequest.findOne({
-          $or: [{_id:repairRequest}]
+          $or: [{_id:repairRequest._id}]
           })
         res.status(200).json({ message: 'RepairRequest updated successfully' , body: updateRepairRequest });
       

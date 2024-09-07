@@ -26,6 +26,6 @@ router.route("/add").post(
 router.route("/get").post(getRepairRequest);
 router.route("/get/user").post(getUsersRepairRequest);
 router.route("/getAll").get(getAllRepairRequests);
-router.route("/update").get(updateRepairRequest);
+router.route("/update").post(updateRepairRequest);
 
 export default router;
